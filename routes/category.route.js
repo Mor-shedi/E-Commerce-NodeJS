@@ -1,15 +1,31 @@
 const express = require("express");
+
 const {
   getCategories,
   createCategory,
-  getCategory, 
+  getCategory,
   updateCategory,
-  deleteCategory
+  deleteCategory,
 } = require("../controllers/category.controller");
+
+const {
+  categoryValidator,
+  createCreateValidator,
+  updateCategoryValidator,
+  deleteCategoryValidator,
+} = require("../utils/validators/categoryValidator");
 
 const router = express.Router();
 
-router.route("/").post(createCategory).get(getCategories);
-router.route("/:id").get(getCategory).patch(updateCategory).delete(deleteCategory);
+router
+  .route("/")
+  .get(getCategories)
+  .post(createCreateValidator, createCategory);
+
+router
+  .route("/:id")
+  .get(categoryValidator, getCategory)
+  .patch(updateCategoryValidator, updateCategory)
+  .delete(deleteCategoryValidator, deleteCategory);
 
 module.exports = router;

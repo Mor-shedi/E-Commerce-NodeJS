@@ -1,25 +1,28 @@
 const Category = require("../models/categoryModel");
 const slugify = require("slugify");
 const asyncHandler = require("express-async-handler");
+const ApiError = require("../utils/apiError");
 
 // @decs    Get All Categories
 // @route   GET  /api/v1/categories
 // @access  public
 exports.getCategories = asyncHandler(async (req, res) => {
-  const page = req.query.page * 1 | 1;
-  const limit = req.query.limit * 1 | 4;
+  const page = (req.query.page * 1) | 1;
+  const limit = (req.query.limit * 1) | 4;
   const skip = (page - 1) * limit;
-  const category = await Category.find().skip(skip).limit(limit);
-  return res.status(200).json({ result: category.length, page, data: category });
+  const category = await Category.find({}, { __v: 0 }).skip(skip).limit(limit);
+  return res
+    .status(200)
+    .json({ result: category.length, page, data: category });
 });
 
 // @decs    Get Single Category
 // @route   GET   /api/v1/categories/:id
 // @access  public
-exports.getCategory = asyncHandler(async (req, res) => {
+exports.getCategory = asyncHandler(async (req, res, next) => {
   const category = await Category.findById(req.params.id);
   if (!category) {
-    return res.status(404).json({msg: 'No Category For This id'})
+    return next(new ApiError("No Category For This id", 404));
   }
   return res.status(200).json({ data: category });
 });
@@ -27,10 +30,10 @@ exports.getCategory = asyncHandler(async (req, res) => {
 // @decs    Update Category
 // @route   PATCH   /api/v1/categories/:id
 // @access  private
-exports.updateCategory = asyncHandler(async (req, res) => {
+exports.updateCategory = asyncHandler(async (req, res, next) => {
   const category = await Category.findById(req.params.id);
   if (!category) {
-    return res.status(404).json({msg: 'No Category For This id'})
+    return next(new ApiError("No Category For This id", 404));
   }
   category.name = req.body.name;
   category.slug = slugify(req.body.name);
@@ -41,13 +44,13 @@ exports.updateCategory = asyncHandler(async (req, res) => {
 // @decs    Delete Category
 // @route   DELETE  /api/v1/categories/:id
 // @access  private
-exports.deleteCategory = asyncHandler(async (req, res) => {
+exports.deleteCategory = asyncHandler(async (req, res, next) => {
   let category = await Category.findById(req.params.id);
   if (!category) {
-    return res.status(404).json({msg: 'No Category For This id'})
+    return next(new ApiError("No Category For This id", 404));
   }
   await category.deleteOne();
-  return res.status(200).json({ msg: 'Deleted Successfully'});
+  return res.status(200).json({ msg: "Deleted Successfully" });
 });
 
 // @decs    Create Category
