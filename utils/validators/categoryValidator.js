@@ -6,7 +6,7 @@ exports.categoryValidator = [
   validatorMiddleware,
 ];
 
-exports.createCreateValidator = [
+exports.createCategoryValidator = [
   check("name")
     .notEmpty()
     .withMessage("Category Required")
