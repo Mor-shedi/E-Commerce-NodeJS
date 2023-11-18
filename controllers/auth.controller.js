@@ -116,7 +116,6 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
       subject: "Reset Password",
       message,
     });
-    res.status(200).json({ data: user });
   } catch (error) {
     user.passwordResetCode = undefined;
     user.passwordResetExpires = undefined;
@@ -124,6 +123,7 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
     await user.save();
     return next(new ApiError(error.message, 500));
   }
+
   res.status(200).json({ msg: "Reset code sent to your email" });
 });
 
