@@ -12,6 +12,8 @@ const categoryRoute = require("./routes/category.route");
 const subCategoryRoute = require("./routes/subCategory.route");
 const brandRoute = require("./routes/brand.route");
 const productRoute = require("./routes/product.route");
+const userRoute = require("./routes/user.route");
+const authRoute = require("./routes/auth.route");
 const globalError = require("./middleware/errorMiddleware");
 
 // express app
@@ -31,6 +33,8 @@ app.use("/api/v1/categories", categoryRoute);
 app.use("/api/v1/subcategories", subCategoryRoute);
 app.use("/api/v1/brands", brandRoute);
 app.use("/api/v1/products", productRoute);
+app.use("/api/v1/users", userRoute);
+app.use("/api/v1/auth", authRoute);
 
 app.all("*", (req, res, next) => {
   next(new ApiError("Can't find this route", 400));
